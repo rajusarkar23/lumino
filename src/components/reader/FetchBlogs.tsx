@@ -16,9 +16,6 @@ interface blog {
 export default function FetchBlog() {
     const [loading, setLoading] = useState(false)
     const [blogs, setBlogs] = useState<blog[]>([])
-    const [blogId, setBlogId] = useState()
-    // console.log(blogId);
-
 
     const fetchblog = async () => {
         try {
@@ -30,9 +27,6 @@ export default function FetchBlog() {
             if (response.success === true) {
                 setLoading(false)
                 setBlogs(response.blogs)
-                // console.log(response.blogs.id);
-
-                // setBlogId(response.blogs.blogs.id)
                 console.log(response);
 
             }

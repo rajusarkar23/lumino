@@ -15,6 +15,14 @@ model Writer {
   isVerified  Boolean       @default(false)
   otp         String     
   blogs       Blog[]   
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+enum Category {
+  FITNESS
+  MENTAL_HEALTH
+  FINANCE
 }
 
 model Blog {
@@ -23,6 +31,9 @@ model Blog {
   slug                  String
   thumbnailImage        String 
   content               String
-  writer                Writer @relation(fields: [writerId], references: [id])
+  writer                Writer       @relation(fields: [writerId], references: [id])
   writerId              Int
+  category              Category
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
 }
