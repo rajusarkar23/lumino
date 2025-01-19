@@ -1,64 +1,68 @@
 import { generateOTP } from "@/utils";
-import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt"
 import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken"
 import { cookies } from "next/headers";
+import { db } from "@/db/db";
+import { Writer } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
-const prisma = new PrismaClient()
 
 export async function POST(req: NextRequest) {
-    const { email, password } = await req.json()
+  const { email, password } = await req.json()
 
-    try {
-        // check if writer already exist
-        const writerExists = await prisma.writer.findUnique({
-            where: { email }
-        })
-        if (writerExists) {
-            return NextResponse.json({ success: false, message: "Writer already exists with this email." })
-        }
-        // nodemailer credentials
-        const sender = process.env.EMAIL;
-        const mailPassword = process.env.EMAIL_PASSWORD;
-        // nodemailer transporte
-        const transporter = nodemailer.createTransport({
-            service: "gmail",
-            auth: {
-                user: sender,
-                pass: mailPassword,
-            },
-        });
-        // otp generate
-        const otp = generateOTP(6)
-        console.log(otp);
-        // password and otp hash
-        const hashedPassword = bcrypt.hashSync(password, 10)
-        const hashedOTP = bcrypt.hashSync(otp, 10)
-        // create writer
-        const newWriter = await prisma.writer.create({
-            data: {
-                email,
-                password: hashedPassword,
-                otp: hashedOTP,
-            }
-        })
-        if (!newWriter) {
-            return NextResponse.json({ success: false, message: "Unable to create your account, please try again." })
-        }
-        const jwtToken = jwt.sign({ writerEmailId: newWriter.email }, `${process.env.WRITER_OTP_VERIFY_SECRET}`
-        );
+  try {
+    const writerExists = await db.select().from(Writer).where(eq(Writer.email, email))
 
-        (await cookies()).set("otp-verify-session", jwtToken)
+    if (writerExists.length !== 0) {
+      console.log(" writer found");
+      return NextResponse.json({ success: false, message: "Writer already exists" })
+    }
 
-        //send mail
-        await transporter.sendMail({
-            from: sender,
-            to: email,
-            replyTo: sender,
-            subject: `Verification OTP`,
-            html: `
+    // nodemailer credentials
+    const sender = process.env.EMAIL;
+    const mailPassword = process.env.EMAIL_PASSWORD;
+    // nodemailer transporte
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: sender,
+        pass: mailPassword,
+      },
+    });
+    // otp generate
+    const otp = generateOTP(6)
+    console.log(otp);
+    // password and otp hash
+    const hashedPassword = bcrypt.hashSync(password, 10)
+    const hashedOTP = bcrypt.hashSync(otp, 10)
+    // create writer
+    const newWriter = await db.insert(Writer).values({
+      email,
+      password: hashedPassword,
+      otp: hashedOTP
+    }).returning()
+
+    console.log(newWriter);
+
+    return NextResponse.json({ success: true, message: "Writer created" })
+
+    // if (!newWriter) {
+    //     return NextResponse.json({ success: false, message: "Unable to create your account, please try again." })
+    // }
+    // const jwtToken = jwt.sign({ writerEmailId: newWriter.email }, `${process.env.WRITER_OTP_VERIFY_SECRET}`
+    // );
+
+    // (await cookies()).set("otp-verify-session", jwtToken)
+
+    //send mail
+    await transporter.sendMail({
+      from: sender,
+      to: email,
+      replyTo: sender,
+      subject: `Verification OTP`,
+      html: `
          <div style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 0; margin: 0; width: 100%; height: 100%;">
         <table align="center" border="0" cellpadding="0" cellspacing="0" style="width: 100%; height: 100%; background-color: #f4f4f4; text-align: center;">
           <tr>
@@ -78,11 +82,11 @@ export async function POST(req: NextRequest) {
           </tr>
         </table>
       </div>`,
-        });
-        return NextResponse.json({ success: true, message: "Writer created successfully.", writerEmail: newWriter.email })
-    } catch (error) {
-        console.log(error);
-        return NextResponse.json({success: false, message: "Something went wrong."})
-    }
+    });
+    // return NextResponse.json({ success: true, message: "Writer created successfully.", writerEmail: newWriter.email })
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json({ success: false, message: "Something went wrong." })
+  }
 
 }
