@@ -2,20 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+.ProseMirror {
+    padding: 16px;
+    border: 1px solid #ccc;
+    background: #f3f6f7a3;
+    border-radius: 15px;
+    min-height: 150px;
+    outline: none;
   }
+.ProseMirror:hover{
+  background: #95c5d577;
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-}
+  ul, li {
+    list-style-type: disc;
+    margin-left: 20px;
+  }
