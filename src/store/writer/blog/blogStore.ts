@@ -5,15 +5,26 @@ interface blogStoreDataType {
     isLoading: boolean,
     isError: boolean,
     errorMessage: string,
-    blogs: []
-    writeBlog: (title: string, slug: string, thumbnailImage: string, content: string) => Promise<void>
+    isGetBlogById: boolean,
+    blogId: any,
+    title: string,
+    writerId: any,
+    thumbnailImage: string,
+    content: string
+    writeBlog: (title: string, slug: string, thumbnailImage: string, content: string) => Promise<void>,
+    getBlogById: (id: string) => Promise<void>
 }
 
 const blogStore = create(persist<blogStoreDataType>((set) => ({
     isLoading: false,
     isError: false,
     errorMessage: "",
-    blogs: [],
+    isGetBlogById: false,
+    blogId: undefined,
+    title: "",
+    writerId: undefined,
+    thumbnailImage: "",
+    content: "",
     writeBlog: async (title, slug, thumbnailImage, content) => {
         set({ isLoading: true, isError: false })
         try {
@@ -31,6 +42,28 @@ const blogStore = create(persist<blogStoreDataType>((set) => ({
 
         } catch (error) {
             console.log(error);
+        }
+    },
+    getBlogById: async (id) => {
+        set({ isLoading: true, isError: false, errorMessage: "" })
+        try {
+            const res = await fetch("/api/blog/by-id", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({id})
+            })
+            const response = await res.json()
+            if (response.success === true) {
+                const blog = response.fetchBlogById
+                set({isError: false, isLoading: false, isGetBlogById: true, title: blog.title, content: blog.content, thumbnailImage: blog.thumbnailImage, blogId: blog.id})
+            }
+            console.log(response);
+            set({isLoading: false})
+        } catch (error) {
+            console.log(error);
+            set({isLoading: false, isError: true, errorMessage: "Something went wrong, please try again."})
         }
     }
 }), { name: "blog-store" }))
