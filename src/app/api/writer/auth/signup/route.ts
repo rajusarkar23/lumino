@@ -44,49 +44,42 @@ export async function POST(req: NextRequest) {
       otp: hashedOTP
     }).returning()
 
-    console.log(newWriter);
-
-    return NextResponse.json({ success: true, message: "Writer created" })
-
-    // if (!newWriter) {
-    //     return NextResponse.json({ success: false, message: "Unable to create your account, please try again." })
-    // }
-    // const jwtToken = jwt.sign({ writerEmailId: newWriter.email }, `${process.env.WRITER_OTP_VERIFY_SECRET}`
-    // );
-
-    // (await cookies()).set("otp-verify-session", jwtToken)
-
-    //send mail
-    await transporter.sendMail({
-      from: sender,
-      to: email,
-      replyTo: sender,
-      subject: `Verification OTP`,
-      html: `
-         <div style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 0; margin: 0; width: 100%; height: 100%;">
-        <table align="center" border="0" cellpadding="0" cellspacing="0" style="width: 100%; height: 100%; background-color: #f4f4f4; text-align: center;">
-          <tr>
-            <td style="padding: 40px 0;">
-              <table align="center" border="0" cellpadding="0" cellspacing="0" style="max-width: 600px; width: 100%; background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); text-align: center;">
-                <tr>
-                  <td>
-                    <h2 style="color: #333333; margin-bottom: 20px;">Here is your OTP</h2>
-                    <p style="font-size: 16px; color: #555555; margin-bottom: 20px;">Welcome onboard, Please verify your email with the below OTP.</p>
-                    <p style="font-size: 18px; color: #333333; margin-bottom: 30px;"><strong>OTP: ${otp}</strong></p>
-                    <p style="font-size: 16px; color: #555555; margin-bottom: 20px;">From: ${sender}</p>
-                    <p style="font-size: 14px; color: #777777;">This is an automated message, please do not reply.</p>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-        </table>
-      </div>`,
-    });
-    // return NextResponse.json({ success: true, message: "Writer created successfully.", writerEmail: newWriter.email })
+    if (newWriter.length === 1) {
+      const jwtToken = jwt.sign({ writerEmailId: email }, `${process.env.WRITER_OTP_VERIFY_SECRET}`
+      );
+      (await cookies()).set("otp-verify-session", jwtToken)
+      //send mail
+      await transporter.sendMail({
+        from: sender,
+        to: email,
+        replyTo: sender,
+        subject: `Verification OTP`,
+        html: `
+           <div style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 0; margin: 0; width: 100%; height: 100%;">
+          <table align="center" border="0" cellpadding="0" cellspacing="0" style="width: 100%; height: 100%; background-color: #f4f4f4; text-align: center;">
+            <tr>
+              <td style="padding: 40px 0;">
+                <table align="center" border="0" cellpadding="0" cellspacing="0" style="max-width: 600px; width: 100%; background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); text-align: center;">
+                  <tr>
+                    <td>
+                      <h2 style="color: #333333; margin-bottom: 20px;">Here is your OTP</h2>
+                      <p style="font-size: 16px; color: #555555; margin-bottom: 20px;">Welcome onboard, Please verify your email with the below OTP.</p>
+                      <p style="font-size: 18px; color: #333333; margin-bottom: 30px;"><strong>OTP: ${otp}</strong></p>
+                      <p style="font-size: 16px; color: #555555; margin-bottom: 20px;">From: ${sender}</p>
+                      <p style="font-size: 14px; color: #777777;">This is an automated message, please do not reply.</p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </div>`,
+      });
+      return NextResponse.json({ success: true, message: "Writer created successfully.", writerEmail: newWriter[0].email })
+    }
+    return NextResponse.json({ success: false, message: "Unable to create your account, please try again." })
   } catch (error) {
     console.log(error);
     return NextResponse.json({ success: false, message: "Something went wrong." })
   }
-
 }

@@ -1,11 +1,11 @@
+import { db } from "@/db/db";
+import { Blog, Writer } from "@/db/schema";
 import { getWriterEmailFromSession } from "@/utils";
-import { PrismaClient } from "@prisma/client";
+import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
-const prisma = new PrismaClient()
-
 export async function POST(req: NextRequest) {
-    const { content, title, slug, thumbnailImage } = await req.json()
+    const { content, title, slug, thumbnailImage, category } = await req.json()
 
     const writerEmail = await getWriterEmailFromSession()
 
@@ -14,31 +14,30 @@ export async function POST(req: NextRequest) {
     }
 
     try {
-        const findWriter = await prisma.writer.findUnique({
-            where: { email: writerEmail }
-        })
+        const findWriter = await db.select().from(Writer).where(eq(Writer.email, writerEmail))
+
+        if (findWriter.length === 1) {
+            const createBlog = await db.insert(Blog).values({
+                title,
+                slug,
+                thumbnailImage,
+                content,
+                category: "finance",
+                writerId: findWriter[0].id
+            })
+            if (!createBlog) {
+                return NextResponse.json({ success: false, message: "unable to create this blog" })
+
+            }
+
+            return NextResponse.json({ success: true, message: "Blog created.", createdBlog: createBlog })
+
+        }
 
         if (!findWriter) {
             return NextResponse.json({ success: false, message: "Unable to find writer." })
         }
 
-        const createBlog = await prisma.blog.create({
-            data: {
-                title,
-                slug,
-                thumbnailImage,
-                content,
-                writer: {
-                    connect: { id: findWriter.id }
-                }
-            }
-        })
-        if (!createBlog) {
-            return NextResponse.json({ success: false, message: "unable to create this blog" })
-
-        }
-
-        return NextResponse.json({ success: true, message: "Blog created.", createdBlog: createBlog })
     } catch (error) {
         console.log(error);
         return NextResponse.json({ success: false, message: "Something went wrong." })
@@ -54,27 +53,23 @@ export async function GET() {
     }
 
     try {
-        const findWriter = await prisma.writer.findUnique({
-            where: { email: writerEmail }
-        })
+        const findWriter = await db.select().from(Writer).where(eq(Writer.email, writerEmail))
 
-        if (!findWriter) {
-            return NextResponse.json({ success: false, message: "Unable to find writer." })
+        if (findWriter.length === 1) {
+            const fetchBlog = await db.select().from(Blog).where(eq(Blog.writerId, findWriter[0].id))
+
+            if (fetchBlog.length === 0) {
+                return NextResponse.json({ success: false, message: "no blogs found, unable to fetch blogs" })
+            }
+
+            return NextResponse.json({ success: true, message: "Fetched successfully,", blogs: fetchBlog })
+
         }
 
-        const fetchBlog = await prisma.blog.findMany({
-            where: {writerId: findWriter.id}
-        })
+        return NextResponse.json({ success: false, message: "Unable to find writer." })
 
-        if (!fetchBlog) {
-            return NextResponse.json({success: false, message: "unable to fetch blogs"})
-        }
-
-        return NextResponse.json({success: true, message: "Fetched successfully,", blogs: fetchBlog})
-
-       
     } catch (error) {
         console.log(error);
-        return NextResponse.json({success: false, message: "something went wrong"})
+        return NextResponse.json({ success: false, message: "something went wrong" })
     }
 }

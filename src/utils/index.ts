@@ -13,7 +13,11 @@ export function generateOTP(n: number) {
 
 // get user from session
 export async function getWriterEmailFromJWTVerifySession() {
+    console.log("ram");
+    
     const cookie = (await cookies()).get("otp-verify-session")?.value
+    console.log(cookie);
+    
     if (!cookie) {
         return NextResponse.json({ success: false, message: "No session found." })
     }
