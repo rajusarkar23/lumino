@@ -1,4 +1,5 @@
 "use client"
+import { Spinner } from "@heroui/spinner";
 import Link from "next/link";
 import { useEffect, useState } from "react"
 
@@ -39,26 +40,33 @@ export default function FetchBlog() {
         fetchblog()
     }, [])
 
+
     return (
-        <div className=" px-4 lg:px-64">
-            <div className="sm:grid sm:grid-cols-2 gap-2 px-2 py-2">
-                {
-                    loading ? (<>fetching...</>) : (
-                        blogs.map((items, index) => (
-                            <div key={index} className="bg-[#E4E4E7] hover:bg-[#D4D4D8] hover:scale-95 transition-all mt-2 rounded-md px-2 py-2">
-                                <Link href={`read/${items.slug}/${items.id}`} className="flex">
-                                    <div className="px-1 items-center">
-                                        <img src={items.thumbnailImage} alt="img" width={400} className="rounded" />
-                                    </div>
-                                    <div>
-                                        <h2>{items.title}</h2>
-                                    </div>
-                                </Link>
-                            </div>
-                        ))
-                    )
-                }
-            </div>
+        <div>
+            {
+                loading ? (<div className="flex items-center justify-center mt-20">
+                    <Spinner color="default"/>
+                </div>) : (<div className="px-4 lg:px-64">
+                    <div className="sm:grid sm:grid-cols-2 gap-2 px-2 py-2">
+                        {
+                            blogs.map((items, index) => (
+                                <div key={index} className="bg-[#E4E4E7] hover:bg-[#D4D4D8] hover:scale-95 transition-all mt-2 rounded-md px-2 py-2">
+                                    <Link href={`read/${items.slug}/${items.id}`} className="flex">
+                                        <div className="px-1 items-center">
+                                            <img src={items.thumbnailImage} alt="img" width={400} className="rounded" />
+                                        </div>
+                                        <div>
+                                            <h2>{items.title}</h2>
+                                        </div>
+                                    </Link>
+                                </div>
+                            ))
+                        }
+                    </div>
+                </div>)
+            }
+
         </div>
+
     )
 }
