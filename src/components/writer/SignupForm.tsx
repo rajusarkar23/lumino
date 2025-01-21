@@ -76,7 +76,6 @@ export const EyeFilledIcon = (props: CustomSVGProps) => {
 
 export default function SignupForm() {
     const [isVisible, setIsVisible] = useState(false);
-    const [loading, setLoading] = useState(false)
     const toggleVisibility = () => setIsVisible(!isVisible);
     const { isLoading, isError, errorMessage, writerSignup } = writerAuthStore()
     const router = useRouter()

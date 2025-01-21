@@ -21,7 +21,6 @@ const WriteBlog = () => {
   const [category, setCategory] = useState("")
   const [uploadingImage, setUploadingImage] = useState(false)
   const [uploadingImageSuccess, setUploadingImageSuccess] = useState(false)
-  const [imgaeUploadError, setImageUploadError] = useState(false)
 
   const { writeBlog, isLoading } = blogStore()
   const router = useRouter();
@@ -114,7 +113,6 @@ const WriteBlog = () => {
     try {
       setUploadingImageSuccess(false)
       setUploadingImage(false)
-      setImageUploadError(false)
       setUploadingImage(true)
       const res = await fetch("/api/writer/blog/upload-image", {
         method: "POST",
@@ -129,7 +127,6 @@ const WriteBlog = () => {
         setUploadingImageSuccess(true)
       } else{
         setUploadingImage(false)
-        setImageUploadError(true)
       }
     } catch (error) {
       console.log(error);
@@ -159,6 +156,7 @@ const WriteBlog = () => {
           {
             uploadingImageSuccess ? (<span className="flex font-semibold text-green-500">Image uploaded <CircleCheck className="ml-1 text-green-500"/></span>) : (<></>)
           }
+         
       </div>
       <div >
         <Select className="max-w-xs" label="Category" labelPlacement="outside" size="lg" placeholder="Select an category" onChange={(e) => setCategory(e.target.value)}>

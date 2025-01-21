@@ -7,9 +7,9 @@ interface blogStoreDataType {
     errorMessage: string,
     isBlogCreated: boolean,
     isGetBlogById: boolean,
-    blogId: any,
+    blogId: number | null,
     title: string,
-    writerId: any,
+    writerId: number | null,
     thumbnailImage: string,
     content: string,
     category: string,
@@ -23,9 +23,9 @@ const blogStore = create(persist<blogStoreDataType>((set) => ({
     errorMessage: "",
     isBlogCreated: false,
     isGetBlogById: false,
-    blogId: undefined,
+    blogId: null,
     title: "",
-    writerId: undefined,
+    writerId: null,
     thumbnailImage: "",
     content: "",
     category: "",
@@ -55,18 +55,18 @@ const blogStore = create(persist<blogStoreDataType>((set) => ({
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({id})
+                body: JSON.stringify({ id })
             })
             const response = await res.json()
             if (response.success === true) {
                 const blog = response.fetchBlogById
-                set({isError: false, isLoading: false, isGetBlogById: true, title: blog.title, content: blog.content, thumbnailImage: blog.thumbnailImage, blogId: blog.id, category: blog.category})
+                set({ isError: false, isLoading: false, isGetBlogById: true, title: blog.title, content: blog.content, thumbnailImage: blog.thumbnailImage, blogId: blog.id, category: blog.category })
             }
             console.log(response);
-            set({isLoading: false})
+            set({ isLoading: false })
         } catch (error) {
             console.log(error);
-            set({isLoading: false, isError: true, errorMessage: "Something went wrong, please try again."})
+            set({ isLoading: false, isError: true, errorMessage: "Something went wrong, please try again." })
         }
     }
 }), { name: "blog-store" }))

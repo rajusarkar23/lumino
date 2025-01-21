@@ -45,16 +45,20 @@ const ReadComp = () => {
     getBlogById()
   }, [])
 
+  // if (!blog) {
+  //   return <></>
+  // }
+
   return (
     <div>
       {
-        blogFetched ? (
+        blogFetched && blog !==undefined ? (
           <div className='sm:px-20 px-10'>
             <div>
               <h1 className='text-2xl font-bold max-w-[550px]'>{blog?.title}</h1>
               <div>
                 <Chip color="secondary">
-                  {blog?.category === "mental_health" ? (<p>Mental Health</p>) : (<p className='capitalize'> {blog?.category}</p>)}
+                  {blog.category === "mental_health" ? (<p>Mental Health</p>) : (<p className='capitalize'> {blog?.category}</p>)}
                 </Chip>
               </div>
               <img src={blog?.thumbnailImage} alt="image" width={500} className='mt-2 rounded' />

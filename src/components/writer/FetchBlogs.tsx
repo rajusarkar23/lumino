@@ -16,7 +16,6 @@ interface blog {
 export default function FetchBlog() {
     const [loading, setLoading] = useState(false)
     const [blogs, setBlogs] = useState<blog[]>([])
-    const [blogId, setBlogId] = useState()
 
     const fetchblog = async () => {
         try {
