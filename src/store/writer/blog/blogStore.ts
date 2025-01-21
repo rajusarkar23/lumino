@@ -5,6 +5,7 @@ interface blogStoreDataType {
     isLoading: boolean,
     isError: boolean,
     errorMessage: string,
+    isBlogCreated: boolean,
     isGetBlogById: boolean,
     blogId: any,
     title: string,
@@ -20,6 +21,7 @@ const blogStore = create(persist<blogStoreDataType>((set) => ({
     isLoading: false,
     isError: false,
     errorMessage: "",
+    isBlogCreated: false,
     isGetBlogById: false,
     blogId: undefined,
     title: "",
@@ -28,7 +30,7 @@ const blogStore = create(persist<blogStoreDataType>((set) => ({
     content: "",
     category: "",
     writeBlog: async (title, slug, thumbnailImage, content, category) => {
-        set({ isLoading: true, isError: false })
+        set({ isLoading: true, isError: false, isBlogCreated: false })
         try {
             const res = await fetch("/api/writer/blog", {
                 method: "POST",
@@ -39,7 +41,7 @@ const blogStore = create(persist<blogStoreDataType>((set) => ({
             });
             const response = await res.json()
             if (response.success === true) {
-                set({ isLoading: false, isError: false, errorMessage: "" })
+                set({ isLoading: false, isError: false, errorMessage: "", isBlogCreated: true })
             }
         } catch (error) {
             console.log(error);

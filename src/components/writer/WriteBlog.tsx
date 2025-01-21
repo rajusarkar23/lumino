@@ -2,7 +2,7 @@
 
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { Bold, ImagePlus, Italic, List } from "lucide-react";
+import { Bold, CircleCheck, ImagePlus, Italic, List } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import Image from "@tiptap/extension-image";
 import { useRouter } from "next/navigation";
@@ -10,6 +10,7 @@ import { Input } from "@heroui/input";
 import { Button } from "@heroui/button";
 import blogStore from "@/store/writer/blog/blogStore";
 import { Select, SelectItem } from "@heroui/select";
+import { Spinner } from "@heroui/spinner";
 // import { slugify } from "@/utils/index";
 
 const WriteBlog = () => {
@@ -18,9 +19,11 @@ const WriteBlog = () => {
   const [slug, setSlug] = useState("")
   const [thumbnailImage, setThumbnailImage] = useState("")
   const [category, setCategory] = useState("")
-  // console.log(category);
+  const [uploadingImage, setUploadingImage] = useState(false)
+  const [uploadingImageSuccess, setUploadingImageSuccess] = useState(false)
+  const [imgaeUploadError, setImageUploadError] = useState(false)
 
-  const { writeBlog } = blogStore()
+  const { writeBlog, isLoading } = blogStore()
   const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,6 +93,9 @@ const WriteBlog = () => {
   const createBlog = async () => {
     try {
       await writeBlog(title, slug, thumbnailImage, content, category)
+      if (blogStore.getState().isBlogCreated === true) {
+        router.push("/writer/h")
+      }
     } catch (error) {
       console.log(error);
     }
@@ -106,6 +112,10 @@ const WriteBlog = () => {
     formData.append("file", selectedFile);
 
     try {
+      setUploadingImageSuccess(false)
+      setUploadingImage(false)
+      setImageUploadError(false)
+      setUploadingImage(true)
       const res = await fetch("/api/writer/blog/upload-image", {
         method: "POST",
         body: formData,
@@ -115,6 +125,11 @@ const WriteBlog = () => {
       if (resposne.success === true) {
         const imageUrl = resposne.url;
         setThumbnailImage(imageUrl)
+        setUploadingImage(false)
+        setUploadingImageSuccess(true)
+      } else{
+        setUploadingImage(false)
+        setImageUploadError(true)
       }
     } catch (error) {
       console.log(error);
@@ -136,11 +151,17 @@ const WriteBlog = () => {
       <div>
         <Input placeholder="slug" label="Slug" labelPlacement="outside" size="lg" value={slug} />
       </div>
-      <div>
+      <div className="py-3">
         <Input type="file" label="Thumbnail" labelPlacement="outside" size="lg" onChange={uploadFile} />
+          {
+            uploadingImage ? (<span className="text-blue-500 font-semibold">Uploading...<Spinner size="sm"/></span>): (<></>)
+          }
+          {
+            uploadingImageSuccess ? (<span className="flex font-semibold text-green-500">Image uploaded <CircleCheck className="ml-1 text-green-500"/></span>) : (<></>)
+          }
       </div>
-      <div>
-        <Select className="max-w-xs" label="Category" placeholder="Select an category" onChange={(e) => setCategory(e.target.value)}>
+      <div >
+        <Select className="max-w-xs" label="Category" labelPlacement="outside" size="lg" placeholder="Select an category" onChange={(e) => setCategory(e.target.value)}>
           {blogCategory.map((category) => (
             <SelectItem key={category.key}>{category.label}</SelectItem>
           ))}
@@ -178,7 +199,8 @@ const WriteBlog = () => {
       </div>
       <div className="mt-2">
         {
-          <Button onPress={createBlog} color="success" size="lg" className="text-white font-semibold">Create blog</Button>
+          isLoading ? (<Button isDisabled size="lg"><Spinner /></Button>) : ( <Button onPress={createBlog} color="success" size="lg" className="text-white font-semibold">Create blog</Button>
+          )
         }
       </div>
     </div>

@@ -6,10 +6,6 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
     const { content, title, slug, thumbnailImage, category } = await req.json()
-    console.log(slug);
-    
-    console.log(category);
-    
 
     const writerEmail = await getWriterEmailFromSession()
 
@@ -37,10 +33,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ success: true, message: "Blog created.", createdBlog: createBlog })
 
         }
-
-        if (!findWriter) {
-            return NextResponse.json({ success: false, message: "Unable to find writer." })
-        }
+        return NextResponse.json({ success: false, message: "Unable to find writer, try again" })
 
     } catch (error) {
         console.log(error);
