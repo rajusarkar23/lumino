@@ -20,7 +20,7 @@ export default function FetchBlog() {
     const fetchblog = async () => {
         try {
             setLoading(true)
-            const res = await fetch("/api/blog", {
+            const res = await fetch("/api/reader", {
                 method: "GET"
             })
             const response = await res.json()
@@ -40,16 +40,19 @@ export default function FetchBlog() {
     }, [])
 
     return (
-        <div className="ml-20 mt-20 border max-w-96 h-64 flex justify-center items-center">
-            <div>
+        <div className=" px-4 lg:px-64">
+            <div className="sm:grid sm:grid-cols-2 gap-2 px-2 py-2">
                 {
                     loading ? (<>fetching...</>) : (
                         blogs.map((items, index) => (
-                            <div key={index}>
-                                <Link href={`blog/${items.slug}/${items.id}`} className="bg-orange-500 gap-3 mb-2 h-10">
-                                    <h2>{items.title}</h2>
-                                    <img src={items.thumbnailImage} alt="img" width={10} />
-                                    <p>{items.id}</p>
+                            <div key={index} className="bg-[#E4E4E7] hover:bg-[#D4D4D8] hover:scale-95 transition-all mt-2 rounded-md px-2 py-2">
+                                <Link href={`read/${items.slug}/${items.id}`} className="flex">
+                                    <div className="px-1 items-center">
+                                        <img src={items.thumbnailImage} alt="img" width={400} className="rounded" />
+                                    </div>
+                                    <div>
+                                        <h2>{items.title}</h2>
+                                    </div>
                                 </Link>
                             </div>
                         ))

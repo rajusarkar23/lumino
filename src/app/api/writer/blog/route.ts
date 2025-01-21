@@ -51,10 +51,8 @@ export async function GET() {
 
     try {
         const findWriter = await db.select().from(Writer).where(eq(Writer.email, writerEmail))
-
         if (findWriter.length === 1) {
             const fetchBlog = await db.select().from(Blog).where(eq(Blog.writerId, findWriter[0].id))
-
             if (fetchBlog.length === 0) {
                 return NextResponse.json({ success: false, message: "no blogs found, unable to fetch blogs" })
             }

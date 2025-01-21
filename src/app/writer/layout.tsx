@@ -9,13 +9,13 @@ export default function Layout({
     children: React.ReactNode;
 }>) {
     return (
-        <div>
-            <HeroUIProvider>
-                <WriterHomeNavbar />
-                {children}
-            </HeroUIProvider>
-        </div>
-
-
+        <html>
+            <body>
+                <HeroUIProvider>
+                    <WriterHomeNavbar />
+                    {children}
+                </HeroUIProvider>
+            </body>
+        </html>
     );
 }
