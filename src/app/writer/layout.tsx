@@ -1,5 +1,5 @@
 import WriterHomeNavbar from "@/components/writer/WriterHomeNavbar";
-import "../../globals.css";
+import "../../app/globals.css";
 import { HeroUIProvider } from "@heroui/system";
 
 
