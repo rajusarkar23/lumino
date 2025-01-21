@@ -6,6 +6,10 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
     const { content, title, slug, thumbnailImage, category } = await req.json()
+    console.log(slug);
+    
+    console.log(category);
+    
 
     const writerEmail = await getWriterEmailFromSession()
 
@@ -22,7 +26,7 @@ export async function POST(req: NextRequest) {
                 slug,
                 thumbnailImage,
                 content,
-                category: "finance",
+                category: category,
                 writerId: findWriter[0].id
             })
             if (!createBlog) {

@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { Input } from "@heroui/input";
 import { Button } from "@heroui/button";
 import blogStore from "@/store/writer/blog/blogStore";
+import { Select, SelectItem } from "@heroui/select";
 // import { slugify } from "@/utils/index";
 
 const WriteBlog = () => {
@@ -16,13 +17,15 @@ const WriteBlog = () => {
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("")
   const [thumbnailImage, setThumbnailImage] = useState("")
+  const [category, setCategory] = useState("")
+  // console.log(category);
+
   const { writeBlog } = blogStore()
   const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value)
   }
-
 
   const slugify = (str: string) => {
     str = str.replace(/^\s+|\s+$/g, ''); // trim leading/trailing white space
@@ -38,9 +41,6 @@ const WriteBlog = () => {
     const slugs = slugify(str)
     setSlug(slugs)
   }, [handleChange, title])
-
-
-
 
   // Create editor
   const editor = useEditor({
@@ -89,7 +89,7 @@ const WriteBlog = () => {
 
   const createBlog = async () => {
     try {
-      await writeBlog(title, slug, thumbnailImage, content)
+      await writeBlog(title, slug, thumbnailImage, content, category)
     } catch (error) {
       console.log(error);
     }
@@ -121,6 +121,13 @@ const WriteBlog = () => {
     }
   }
 
+
+  const blogCategory = [
+    { key: "fitness", label: "Fitness" },
+    { key: "mental_health", label: "Mental Health" },
+    { key: "finance", label: "Finance" }
+  ]
+
   return (
     <div className="px-8 py-4">
       <div>
@@ -131,6 +138,13 @@ const WriteBlog = () => {
       </div>
       <div>
         <Input type="file" label="Thumbnail" labelPlacement="outside" size="lg" onChange={uploadFile} />
+      </div>
+      <div>
+        <Select className="max-w-xs" label="Category" placeholder="Select an category" onChange={(e) => setCategory(e.target.value)}>
+          {blogCategory.map((category) => (
+            <SelectItem key={category.key}>{category.label}</SelectItem>
+          ))}
+        </Select>
       </div>
       <div>
         <label>Enter content</label>

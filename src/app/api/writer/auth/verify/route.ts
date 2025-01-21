@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
             const updateWriter = await db.update(Writer).set({ isVerified: true }).where(eq(Writer.email, findWriter[0].email)).returning()
             if (updateWriter.length === 1) {
                 console.log(updateWriter);
-                const jwt_token = jwt.sign({ writerEmailId: updateWriter[0].email }, `${process.env.WRITER_SESSION_SECRET}`);
+                const jwt_token = jwt.sign({ writerEmailId: updateWriter[0].email }, `${process.env.WRITER_SESSION_SECRET}`, {expiresIn: "30d"});
                 (await cookies()).set("session", jwt_token)
                 return NextResponse.json({ success: true, message: "Verified successfully", writerEmail: updateWriter[0].email })
                 

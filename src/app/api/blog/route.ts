@@ -1,18 +1,22 @@
-import { PrismaClient } from "@prisma/client";
+import { db } from "@/db/db";
+import { Blog, Writer } from "@/db/schema";
+import { getWriterEmailFromSession } from "@/utils";
+import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
-const prisma = new PrismaClient()
 export async function GET() {
-    // const writerEmail = await getWriterEmailFromSession()
+    const writerEmail = await getWriterEmailFromSession()
 
-    // if (!writerEmail) {
-    //     return NextResponse.json({ success: false, message: "Unable to get writer." })
-    // }
+    if (!writerEmail) {
+        return NextResponse.json({ success: false, message: "Unable to get writer." })
+    }
 
     try {
-        // const findWriter = await prisma.writer.findUnique({
-        //     where: { email: writerEmail }
-        // })
+        const findWriter = await db.select().from(Writer).where(eq(Writer.email, writerEmail))
+
+        if (findWriter.length === 1) {
+            
+        }
 
         // if (!findWriter) {
         //     return NextResponse.json({ success: false, message: "Unable to find writer." })

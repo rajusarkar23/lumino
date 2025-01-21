@@ -13,7 +13,6 @@ export function generateOTP(n: number) {
 
 // get user from session
 export async function getWriterEmailFromJWTVerifySession() {
-    console.log("ram");
     
     const cookie = (await cookies()).get("otp-verify-session")?.value
     console.log(cookie);
@@ -35,7 +34,9 @@ export async function getWriterEmailFromJWTVerifySession() {
 
 export async function getWriterEmailFromSession() {
     const cookie = (await cookies()).get("session")?.value
-    if (!cookie) {
+    
+    if (cookie === undefined) {
+        console.log("cookie not defined");
         return NextResponse.json({ success: false, message: "No session found." })
     }
 

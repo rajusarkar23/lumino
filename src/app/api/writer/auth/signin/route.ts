@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
                 return NextResponse.json({ success: false, message: "Wrong password." })
             }
 
-            const jwt_token = jwt.sign({ writerEmailId: findWriter[0].email }, `${process.env.WRITER_SESSION_SECRET}`);
+            const jwt_token = jwt.sign({ writerEmailId: findWriter[0].email }, `${process.env.WRITER_SESSION_SECRET}`, {expiresIn: "30d"});
             (await cookies()).set("session", jwt_token)
             return NextResponse.json({ success: true, message: "Login success", writerEmail: findWriter[0].email })
         }

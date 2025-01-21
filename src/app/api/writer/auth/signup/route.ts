@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
     }).returning()
 
     if (newWriter.length === 1) {
-      const jwtToken = jwt.sign({ writerEmailId: email }, `${process.env.WRITER_OTP_VERIFY_SECRET}`
+      const jwtToken = jwt.sign({ writerEmailId: email }, `${process.env.WRITER_OTP_VERIFY_SECRET}`, {expiresIn:"30d"}
       );
       (await cookies()).set("otp-verify-session", jwtToken)
       //send mail
