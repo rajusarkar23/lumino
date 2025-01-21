@@ -55,18 +55,18 @@ const ReadComp = () => {
         blogFetched && blog !==undefined ? (
           <div className='sm:px-20 px-10'>
             <div>
-              <h1 className='text-2xl font-bold max-w-[550px]'>{blog?.title}</h1>
+              <h1 className='text-2xl font-bold max-w-[550px]'>{blog.title}</h1>
               <div>
                 <Chip color="secondary">
                   {blog.category === "mental_health" ? (<p>Mental Health</p>) : (<p className='capitalize'> {blog?.category}</p>)}
                 </Chip>
               </div>
-              <img src={blog?.thumbnailImage} alt="image" width={500} className='mt-2 rounded' />
+              <img src={blog.thumbnailImage} alt="image" width={500} className='mt-2 rounded' />
               <div className='max-w-[550px]'>
                 <div
                   className="whitespace-pre-wrap [&>ul]:list-disc [&>ul]:pl-6 max-w-[700px]"
                   dangerouslySetInnerHTML={{
-                    __html: blog?.content.replace(/<p>\s*<\/p>/g, "<br>")!,
+                    __html: blog.content.replace(/<p>\s*<\/p>/g, "<br>"),
                   }} />
               </div>
             </div>
