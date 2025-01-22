@@ -1,7 +1,13 @@
 import WriteBlog from '@/components/writer/WriteBlog'
-import React from 'react'
+import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation';
 
-const Write = () => {
+const Write = async () => {
+
+  if (!(await cookies()).get("session")) {
+    redirect("/writer/signin");
+
+  }
   return (
     <div><WriteBlog /></div>
   )

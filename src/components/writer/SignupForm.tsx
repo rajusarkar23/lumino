@@ -6,6 +6,7 @@ import { Form } from "@heroui/form";
 import { Input } from "@heroui/input";
 import { Spinner } from "@heroui/spinner";
 import { X } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -99,7 +100,7 @@ export default function SignupForm() {
     }
 
     return (
-        <div className="mt-48 border rounded-md max-w-3xl py-20 px-28 shadow-lg">
+        <div className="mt-48 border border-blue-500 rounded-md max-w-3xl py-20 px-28 shadow-xl">
             <div className="text-center mb-8 p-0">
 
                 <h2 className="text-xl font-semibold text-blue-500">Signup</h2>
@@ -152,6 +153,10 @@ export default function SignupForm() {
                     {
                         isError ? (<p className="font-semibold text-red-500 underline flex"><X />{errorMessage}</p>) : (<></>)
                     }
+                </div>
+
+                <div>
+                    Already have account? <Link href={"/writer/signin"} className="text-blue-500">Signin</Link>
                 </div>
 
             </Form></div>

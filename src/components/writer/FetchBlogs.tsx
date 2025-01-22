@@ -17,6 +17,8 @@ export default function FetchBlog() {
     const [loading, setLoading] = useState(false)
     const [blogs, setBlogs] = useState<blog[]>([])
 
+   
+
     const fetchblog = async () => {
         try {
             setLoading(true)

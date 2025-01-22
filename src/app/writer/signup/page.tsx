@@ -1,5 +1,4 @@
 import SignupForm from '@/components/writer/SignupForm'
-import React from 'react'
 
 const Signup = () => {
     return (
