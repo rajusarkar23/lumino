@@ -1,5 +1,7 @@
+import { Button } from "@heroui/button";
 import { BrainCircuit, EllipsisVertical } from "lucide-react";
 import Link from "next/link";
+import SubscribeModal from "./SubscribeModal";
 
 export default function Navbar() {
     return (
@@ -19,7 +21,7 @@ export default function Navbar() {
                 <Link href={"/finance"}>Finance</Link>
             </div>
             <div>
-                <Link href={"/writer/h/write-blog"} className="bg-violet-700 py-1 rounded-md hover:bg-violet-800 px-4 text-2xl font-bold text-white hover:text-white/90 transition-all">Subscribe</Link>
+                <SubscribeModal />
             </div>
         </div>
     )
