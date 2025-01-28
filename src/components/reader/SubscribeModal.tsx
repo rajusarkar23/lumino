@@ -40,7 +40,6 @@ export default function SubscribeModal() {
       <Button onPress={onOpen} className="font-semibold">Subscribe</Button>
       <Modal isOpen={isOpen} size="xl" onOpenChange={onOpenChange}>
         <ModalContent>
-          {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1 text-blue-600">Enter your email id.</ModalHeader>
               <ModalBody>
@@ -65,7 +64,6 @@ export default function SubscribeModal() {
               <ModalFooter>
               </ModalFooter>
             </>
-          )}
         </ModalContent>
       </Modal>
     </>
