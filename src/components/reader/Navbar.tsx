@@ -1,4 +1,3 @@
-import { Button } from "@heroui/button";
 import { BrainCircuit, EllipsisVertical } from "lucide-react";
 import Link from "next/link";
 import SubscribeModal from "./SubscribeModal";
