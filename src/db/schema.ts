@@ -1,5 +1,10 @@
 import { boolean, integer, pgEnum, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
 
+export const Subscribers = pgTable("subscibers", {
+    id: serial("id").primaryKey(),
+    email: text("email").notNull().unique()
+})
+
 export const Writer = pgTable("writer", {
     id: serial("id").primaryKey(),
     email: text("email").notNull().unique(),
